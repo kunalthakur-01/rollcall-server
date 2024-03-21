@@ -37,8 +37,8 @@ public class GroupServicesImpl implements GroupServices {
 
         Group newGroup = null;
         try {
-            newGroup = groupDao.findById(adminId).orElseThrow(() -> new InternalServerException("not found"));
-            // newGroup = groupDao.save(group);
+            // newGroup = groupDao.findById(adminId).orElseThrow(() -> new InternalServerException("not found"));
+            newGroup = groupDao.save(group);
         } catch (Exception e) {
             throw new InternalServerException(e.getMessage());
         }
