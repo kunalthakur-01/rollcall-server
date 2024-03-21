@@ -1,5 +1,7 @@
 package com.rollcall.server.models;
 
+import java.util.UUID;
+
 // import java.util.List;
 
 import jakarta.persistence.CascadeType;
@@ -19,8 +21,8 @@ import lombok.Data;
 public class Coordinator {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private int id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private User user;

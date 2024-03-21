@@ -1,5 +1,7 @@
 package com.rollcall.server.dto;
 
+import java.util.UUID;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
@@ -16,7 +18,7 @@ import lombok.ToString;
 @ToString
 public class UserDto {
 
-    private int id;
+    private UUID id;
 
     @NotEmpty(message = "Username cannot be null")
     private String userName;

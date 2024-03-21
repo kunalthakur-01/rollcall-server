@@ -1,5 +1,7 @@
 package com.rollcall.server.models;
 
+import java.util.UUID;
+
 import jakarta.persistence.Column;
 
 // import java.sql.Date;
@@ -17,8 +19,8 @@ import lombok.Data;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private int id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @Column(unique=true)
     private String userName;
