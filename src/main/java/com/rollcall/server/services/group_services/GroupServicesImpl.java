@@ -10,7 +10,6 @@ import com.rollcall.server.dao.UserDao;
 import com.rollcall.server.exceptions.CustomException;
 import com.rollcall.server.exceptions.InternalServerException;
 import com.rollcall.server.exceptions.ResourceNotFoundException;
-import com.rollcall.server.models.Coordinator;
 import com.rollcall.server.models.Group;
 import com.rollcall.server.models.User;
 
@@ -25,7 +24,6 @@ public class GroupServicesImpl implements GroupServices {
 
     @Override
     public Group createNewGroup(Group group, UUID adminId) {
-        Coordinator isCoordinatorExist = null;
         User existingUser = null;
 
         try {
@@ -41,14 +39,12 @@ public class GroupServicesImpl implements GroupServices {
 
         Group newGroup = null;
         try {
-            // newGroup = groupDao.findById(adminId).orElseThrow(() -> new InternalServerException("not found"));
+            group.setUser(existingUser);
             newGroup = groupDao.save(group);
         } catch (Exception e) {
             throw new InternalServerException(e.getMessage());
         }
         
-        System.out.println(isCoordinatorExist);
-
         return newGroup;
     }
     
