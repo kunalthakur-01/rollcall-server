@@ -1,5 +1,7 @@
 package com.rollcall.server.services.user_services;
 
+import java.util.List;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +13,7 @@ import com.rollcall.server.dao.CoordinatorDao;
 import com.rollcall.server.dao.UserDao;
 import com.rollcall.server.dto.UserDto;
 import com.rollcall.server.exceptions.ResourceNotFoundException;
+// import com.rollcall.server.helper.DaoToDto;
 import com.rollcall.server.exceptions.CustomException;
 import com.rollcall.server.exceptions.InternalServerException;
 import com.rollcall.server.exceptions.ResourceAlreadyExistException;
@@ -51,12 +54,10 @@ public class UserServicesImpl implements UserServices {
         }
 
         if(attendee != null) {
-            Attendee newAttendee = null;
             try { 
                 existingUser = userDao.save(user);
                 attendee.setUser(existingUser);
-                newAttendee = attendeeDao.save(attendee);
-                System.out.println(newAttendee);
+                attendeeDao.save(attendee);
             } catch (Exception e) {
                 e.printStackTrace();
                 throw new InternalServerException(e.getMessage());
@@ -64,12 +65,11 @@ public class UserServicesImpl implements UserServices {
         }
 
         if(coordinator != null) {
-            Coordinator newcoordinator = null;
             try { 
                 existingUser = userDao.save(user);
                 coordinator.setUser(existingUser);
-                newcoordinator = coordinatorDao.save(coordinator);
-                System.out.println(newcoordinator);
+                coordinatorDao.save(coordinator);
+                // System.out.println(newcoordinator);
             } catch (Exception e) {
                 e.printStackTrace();
                 throw new InternalServerException(e.getMessage());
@@ -90,7 +90,6 @@ public class UserServicesImpl implements UserServices {
 
     @Override
     public ResponseEntity<User> login(String email, String password) {
-        // User user = userDao.findById(50).orElseThrow(()-> new ResourceNotFoundException("user", "Id", 50));
         User user = null;
         try {
             user = userDao.findByEmail(email);
@@ -107,8 +106,17 @@ public class UserServicesImpl implements UserServices {
             throw new CustomException("Incorrect password", 400);
         }
 
-        // System.out.println(user);
         return ResponseEntity.ok(user);
+    }
+
+    @Override
+    public List<Attendee> getAllAttendees() {
+        return attendeeDao.findAll();
+    }
+
+    @Override
+    public List<Coordinator> getAllCoordinators() {
+        return coordinatorDao.findAll();
     }
 
     public UserDto userToDto(User user) {
@@ -121,3 +129,4 @@ public class UserServicesImpl implements UserServices {
         return user;
     }
 }
+

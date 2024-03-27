@@ -22,17 +22,11 @@ public class GroupController {
     @Autowired
     private GroupServices groupServices;
     
-    @PostMapping("/new/{cid}")
-    public ResponseEntity<Group> createGroup(@Valid @RequestBody Group group, @PathVariable("cid") UUID adminId){
+    @PostMapping("/new/{uid}")
+    public ResponseEntity<Group> createGroup(@Valid @RequestBody Group group, @PathVariable("uid") UUID adminId){
+        // System.out.println(adminId);
         Group newGroup = groupServices.createNewGroup(group, adminId);
         return ResponseEntity.status(201).body(newGroup);
         // return null;
     }
-
-    // @GetMapping("/")
-    // public ResponseEntity<Group> getGroup(@Valid @RequestBody Group group, @PathVariable("cid") Long adminId){
-    //     Group newGroup = groupServices.createNewGroup(group, adminId);
-    //     return ResponseEntity.status(201).body(newGroup);
-    //     // return null;
-    // }
 }

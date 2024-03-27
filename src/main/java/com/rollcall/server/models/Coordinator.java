@@ -1,18 +1,21 @@
 package com.rollcall.server.models;
 
+import java.util.List;
 import java.util.UUID;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 // import java.util.List;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 
 @Data
@@ -24,13 +27,16 @@ public class Coordinator {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne
+    @JoinColumn(name = "userId")
     private User user;
 
-    @NotEmpty(message = "Roll cannot be null")
     private String rollNo;
 
     // private List<User> groupsCreated;
 
-    // private List<User> groups;
+    @OneToMany(mappedBy = "coordinator", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private List<Group> groups;
+
 }
