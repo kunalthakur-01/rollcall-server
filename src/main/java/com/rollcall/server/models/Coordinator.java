@@ -7,7 +7,6 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 // import java.util.List;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -35,7 +34,7 @@ public class Coordinator {
 
     // private List<User> groupsCreated;
 
-    @OneToMany(mappedBy = "coordinator", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "coordinator")
     @JsonManagedReference
     private List<Group> groups;
 

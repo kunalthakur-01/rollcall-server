@@ -66,22 +66,14 @@ public class GroupServicesImpl implements GroupServices {
 
         try {
             group.setCoordinator(existingCoordinator);
+            existingCoordinator.getGroups().add(group);
 
             newGroup = groupDao.save(group);
             
-            // existingCoordinator.getGroups().add(newGroup);
             
             // List<Group> l = new ArrayList<>();
             // l.add(newGroup);
             // existingCoordinator.setGroups(l);
-            
-            
-            // coordinatorDao.save(existingCoordinator);
-
-            // System.out.println(c.getDto());
-            
-
-            // System.out.println(c);
         } catch (Exception e) {
             throw new InternalServerException(e.getMessage());
         }
