@@ -65,8 +65,8 @@ public class GroupServicesImpl implements GroupServices {
         }
 
         try {
+            existingCoordinator.getGroups().add(group);    // optional or not compulsary
             group.setCoordinator(existingCoordinator);
-            existingCoordinator.getGroups().add(group);
 
             newGroup = groupDao.save(group);
             
