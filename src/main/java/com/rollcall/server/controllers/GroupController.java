@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.rollcall.server.models.Group;
+import com.rollcall.server.dto.GroupDto;
 import com.rollcall.server.services.group_services.GroupServices;
 
 import jakarta.validation.Valid;
@@ -23,9 +23,9 @@ public class GroupController {
     private GroupServices groupServices;
     
     @PostMapping("/new/{uid}")
-    public ResponseEntity<Group> createGroup(@Valid @RequestBody Group group, @PathVariable("uid") UUID adminId){
+    public ResponseEntity<GroupDto> createGroup(@Valid @RequestBody GroupDto groupDto, @PathVariable("uid") UUID adminId){
         // System.out.println(adminId);
-        Group newGroup = groupServices.createNewGroup(group, adminId);
+        GroupDto newGroup = groupServices.createNewGroup(groupDto, adminId);
         return ResponseEntity.status(201).body(newGroup);
         // return null;
     }

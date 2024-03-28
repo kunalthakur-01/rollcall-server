@@ -2,6 +2,8 @@ package com.rollcall.server.dto;
 
 import java.util.UUID;
 
+import com.rollcall.server.models.Coordinator;
+
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 
@@ -9,7 +11,7 @@ import lombok.Data;
 public class GroupDto {
     private UUID id;
 
-    private CoordinatorDto coordinator;
+    private Coordinator coordinator;
 
     @NotEmpty(message = "Group name cannot be null")
     private String groupName;

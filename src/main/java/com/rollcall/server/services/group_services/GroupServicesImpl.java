@@ -36,8 +36,8 @@ public class GroupServicesImpl implements GroupServices {
 
     @Override
     @Transactional
-    public Group createNewGroup(Group group, UUID adminId) {
-        // Group group = dtoToGroup(groupDto);
+    public GroupDto createNewGroup(GroupDto groupDto, UUID adminId) {
+        Group group = dtoToGroup(groupDto);
         User existingUser = null;
         Coordinator existingCoordinator = null;
 
@@ -68,12 +68,26 @@ public class GroupServicesImpl implements GroupServices {
             group.setCoordinator(existingCoordinator);
 
             newGroup = groupDao.save(group);
+            
+            // existingCoordinator.getGroups().add(newGroup);
+            
+            // List<Group> l = new ArrayList<>();
+            // l.add(newGroup);
+            // existingCoordinator.setGroups(l);
+            
+            
+            // coordinatorDao.save(existingCoordinator);
+
+            // System.out.println(c.getDto());
+            
+
+            // System.out.println(c);
         } catch (Exception e) {
             throw new InternalServerException(e.getMessage());
         }
         
-        return newGroup;
-        // return groupToDto(newGroup);
+        // return newGroup;
+        return groupToDto(newGroup);
     }
 
     public GroupDto groupToDto(Group group) {
