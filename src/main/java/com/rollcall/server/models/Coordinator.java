@@ -34,5 +34,5 @@ public class Coordinator {
 
     @OneToMany(mappedBy = "coordinator")
     @JsonManagedReference
-    private List<Group> groupsCreated;
+    private List<Group> createdGroups;
 }
