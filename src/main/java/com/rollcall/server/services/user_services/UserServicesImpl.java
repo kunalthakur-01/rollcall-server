@@ -1,6 +1,7 @@
 package com.rollcall.server.services.user_services;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.rollcall.server.dao.AttendeeDao;
 import com.rollcall.server.dao.CoordinatorDao;
 import com.rollcall.server.dao.UserDao;
+import com.rollcall.server.dto.CoordinatorDto;
 import com.rollcall.server.dto.UserDto;
 import com.rollcall.server.exceptions.ResourceNotFoundException;
 // import com.rollcall.server.helper.DaoToDto;
@@ -115,8 +117,8 @@ public class UserServicesImpl implements UserServices {
     }
 
     @Override
-    public List<Coordinator> getAllCoordinators() {
-        return coordinatorDao.findAll();
+    public List<CoordinatorDto> getAllCoordinators() {
+        return coordinatorDao.findAll().stream().map(c -> modelMapper.map(c, CoordinatorDto.class)).collect(Collectors.toList());
     }
 
     public UserDto userToDto(User user) {

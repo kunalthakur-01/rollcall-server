@@ -18,5 +18,7 @@ public class CoordinatorDto {
     @NotEmpty(message = "Roll cannot be null")
     private String rollNo;
 
-    private List<Group> group;
+    private List<Group> groupsCreated;
+
+    private List<Group> otherGroups;
 }

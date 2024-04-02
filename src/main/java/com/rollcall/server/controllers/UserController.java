@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.rollcall.server.dao.CoordinatorDao;
+import com.rollcall.server.dto.CoordinatorDto;
 import com.rollcall.server.dto.UserDto;
 import com.rollcall.server.models.Attendee;
 import com.rollcall.server.models.Coordinator;
@@ -64,7 +65,7 @@ public class UserController {
     }
 
     @GetMapping("/all/coordinators")
-    public ResponseEntity<List<Coordinator>> getAllCoordinators(){
+    public ResponseEntity<List<CoordinatorDto>> getAllCoordinators(){
         
         return ResponseEntity.status(200).body(userServices.getAllCoordinators());
         // return null;

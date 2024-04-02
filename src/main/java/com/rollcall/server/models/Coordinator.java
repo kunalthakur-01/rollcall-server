@@ -32,10 +32,7 @@ public class Coordinator {
 
     private String rollNo;
 
-    // private List<User> groupsCreated;
-
     @OneToMany(mappedBy = "coordinator")
     @JsonManagedReference
-    private List<Group> groups;
-
+    private List<Group> groupsCreated;
 }
