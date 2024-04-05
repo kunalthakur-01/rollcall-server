@@ -11,15 +11,22 @@ import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 
 @Data
-public class CoordinatorDto {
+public class AttendeeDto {
     private UUID id;
 
     private User user;
 
-    @NotEmpty(message = "Roll cannot be null")
+    @NotEmpty(message = "Roll no cannot be null")
     private String rollNo;
 
-    private List<Group> createdGroups = new ArrayList<>();
+    @NotEmpty(message = "Barnch cannot be null")
+    private String branch;
+
+    @NotEmpty(message = "Degree cannot be null")
+    private String degree;
+
+    @NotEmpty(message = "College name cannot be null")
+    private String collegeName;
 
     private List<Group> otherGroups = new ArrayList<>();
 }

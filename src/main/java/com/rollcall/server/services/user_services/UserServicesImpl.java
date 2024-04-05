@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.rollcall.server.dao.AttendeeDao;
 import com.rollcall.server.dao.CoordinatorDao;
 import com.rollcall.server.dao.UserDao;
+import com.rollcall.server.dto.AttendeeDto;
 import com.rollcall.server.dto.CoordinatorDto;
 import com.rollcall.server.dto.UserDto;
 import com.rollcall.server.exceptions.ResourceNotFoundException;
@@ -112,8 +113,8 @@ public class UserServicesImpl implements UserServices {
     }
 
     @Override
-    public List<Attendee> getAllAttendees() {
-        return attendeeDao.findAll();
+    public List<AttendeeDto> getAllAttendees() {
+        return attendeeDao.findAll().stream().map(a -> modelMapper.map(a, AttendeeDto.class)).collect(Collectors.toList());
     }
 
     @Override

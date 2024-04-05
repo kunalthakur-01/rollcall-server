@@ -1,8 +1,12 @@
 package com.rollcall.server.dto;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
+import com.rollcall.server.models.Attendee;
 import com.rollcall.server.models.Coordinator;
+import com.rollcall.server.models.Lecture;
 
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
@@ -27,4 +31,10 @@ public class GroupDto {
 
     @NotEmpty(message = "IconThemeColor cannot be null")
     private String iconThemeColor;
+
+    private List<Attendee> attendees = new ArrayList<>();
+
+    private List<Coordinator> coordinators = new ArrayList<>();
+
+    private List<Lecture> lectures = new ArrayList<>();
 }

@@ -1,9 +1,11 @@
 package com.rollcall.server.controllers;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,6 +29,13 @@ public class GroupController {
         // System.out.println(adminId);
         GroupDto newGroup = groupServices.createNewGroup(groupDto, adminId);
         return ResponseEntity.status(201).body(newGroup);
+        // return null;
+    }
+
+    @GetMapping("all")
+    public ResponseEntity<List<GroupDto>> getAllGroups(){
+        // System.out.println(adminId);
+        return ResponseEntity.status(201).body(groupServices.getAllGroups());
         // return null;
     }
 }

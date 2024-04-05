@@ -1,12 +1,12 @@
 package com.rollcall.server.dao;
 
-import java.util.List;
 import java.util.UUID;
 
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.rollcall.server.models.Attendee;
+import com.rollcall.server.models.User;
 
-public interface AttendeeDao extends CrudRepository<Attendee, UUID>  {
-     public List<Attendee> findAll();
+public interface AttendeeDao extends JpaRepository<Attendee, UUID>  {
+     public Attendee findByUser(User user);
 }

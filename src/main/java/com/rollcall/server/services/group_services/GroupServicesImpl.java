@@ -1,6 +1,8 @@
 package com.rollcall.server.services.group_services;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,6 +82,11 @@ public class GroupServicesImpl implements GroupServices {
         
         // return newGroup;
         return groupToDto(newGroup);
+    }
+
+    @Override
+    public List<GroupDto> getAllGroups() {
+        return groupDao.findAll().stream().map(g -> groupToDto(g)).collect(Collectors.toList());
     }
 
     public GroupDto groupToDto(Group group) {

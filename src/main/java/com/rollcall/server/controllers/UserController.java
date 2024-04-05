@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.rollcall.server.dao.CoordinatorDao;
+import com.rollcall.server.dto.AttendeeDto;
 import com.rollcall.server.dto.CoordinatorDto;
 import com.rollcall.server.dto.UserDto;
-import com.rollcall.server.models.Attendee;
 import com.rollcall.server.models.Coordinator;
 import com.rollcall.server.models.User;
 import com.rollcall.server.models.UserAttendee;
@@ -58,7 +58,7 @@ public class UserController {
     }
 
     @GetMapping("/all/attendees")
-    public ResponseEntity<List<Attendee>> getAllAttendees(){
+    public ResponseEntity<List<AttendeeDto>> getAllAttendees(){
         
         return ResponseEntity.status(200).body(userServices.getAllAttendees());
         // return null;
