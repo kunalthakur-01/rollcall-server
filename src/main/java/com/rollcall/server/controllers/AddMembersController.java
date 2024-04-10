@@ -35,7 +35,7 @@ public class AddMembersController {
     }
 
     @PostMapping("/add-members/{groupId}")
-    public ResponseEntity<?> addMembers(@PathVariable("groupId") UUID groupId, @RequestBody List<UUID> members) {
+    public ResponseEntity<ApiResponse> addMembers(@PathVariable("groupId") UUID groupId, @RequestBody List<UUID> members) {
         return ResponseEntity.ok().body(addMemberServices.addMembers(groupId, members));
         // return null;
     }

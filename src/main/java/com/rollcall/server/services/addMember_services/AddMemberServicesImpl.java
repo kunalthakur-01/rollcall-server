@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,7 +12,6 @@ import com.rollcall.server.dao.AttendeeDao;
 import com.rollcall.server.dao.CoordinatorDao;
 import com.rollcall.server.dao.GroupDao;
 import com.rollcall.server.dao.UserDao;
-import com.rollcall.server.dto.GroupDto;
 import com.rollcall.server.exceptions.CustomException;
 import com.rollcall.server.exceptions.InternalServerException;
 import com.rollcall.server.exceptions.MultipleException;
@@ -39,9 +37,6 @@ public class AddMemberServicesImpl implements AddMemberServices {
 
     @Autowired
     private AttendeeDao attendeeDao;
-
-    @Autowired
-    private ModelMapper modelMapper;
 
     @Override
     @Transactional
@@ -124,7 +119,7 @@ public class AddMemberServicesImpl implements AddMemberServices {
     }
 
     @Override
-    public GroupDto addMembers(UUID groupId, List<UUID> members) {
+    public ApiResponse addMembers(UUID groupId, List<UUID> members) {
         Group existingGroup = null;
 
         try {
@@ -157,7 +152,10 @@ public class AddMemberServicesImpl implements AddMemberServices {
         if(!errors.isEmpty()) {
             throw new MultipleException(errors);
         }
+        else {
+            return new ApiResponse("Members added successfully!", true); 
+        }
 
-        return modelMapper.map(groupDao.save(existingGroup), GroupDto.class);
+        // return modelMapper.map(groupDao.save(existingGroup), GroupDto.class);
     }
 }
