@@ -1,11 +1,13 @@
 package com.rollcall.server.models;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -27,10 +29,12 @@ public class Lecture {
 
     @OneToOne
     @JoinColumn(name = "coordinator")
+    @JsonIgnore
     private User coordinator;
 
     @ManyToOne
     @JoinColumn(name = "groupId")
+    @JsonBackReference
     private Group group;
 
     private String lectureName;
@@ -46,6 +50,5 @@ public class Lecture {
 
     private String endTime;
 
-    private List<String> schedules = new ArrayList<>();
-
+    private List<String> schedules;
 }

@@ -1,5 +1,7 @@
 package com.rollcall.server.services.addMember_services;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import org.modelmapper.ModelMapper;
@@ -14,6 +16,7 @@ import com.rollcall.server.dao.UserDao;
 import com.rollcall.server.dto.GroupDto;
 import com.rollcall.server.exceptions.CustomException;
 import com.rollcall.server.exceptions.InternalServerException;
+import com.rollcall.server.exceptions.MultipleException;
 import com.rollcall.server.exceptions.ResourceAlreadyExistException;
 import com.rollcall.server.exceptions.ResourceNotFoundException;
 import com.rollcall.server.models.Attendee;
@@ -72,9 +75,9 @@ public class AddMemberServicesImpl implements AddMemberServices {
 
         try {
             existingGroup.getCoordinators().add(existingCoordinator);
-            existingCoordinator.getOtherGroups().add(existingGroup);
+            // existingCoordinator.getOtherGroups().add(existingGroup);
             groupDao.save(existingGroup);
-            coordinatorDao.save(existingCoordinator);
+            // coordinatorDao.save(existingCoordinator);
         } catch (Exception e) {
             throw new InternalServerException(e.getMessage());
         }
@@ -83,7 +86,7 @@ public class AddMemberServicesImpl implements AddMemberServices {
         // return this.modelMapper.map(existingGroup, GroupDto.class);
     }
 
-    public GroupDto addAttendee(UUID userId, UUID groupId) {
+    public ApiResponse addAttendee(UUID userId, UUID groupId) {
         Group existingGroup = null;
         Attendee existingAttendee = null;
 
@@ -109,14 +112,52 @@ public class AddMemberServicesImpl implements AddMemberServices {
 
         try {
             existingGroup.getAttendees().add(existingAttendee);
-            existingAttendee.getOtherGroups().add(existingGroup);
+            // existingAttendee.getOtherGroups().add(existingGroup);
             groupDao.save(existingGroup);
-            attendeeDao.save(existingAttendee);
+            // attendeeDao.save(existingAttendee);
         } catch (Exception e) {
             throw new InternalServerException(e.getMessage());
         }
 
-        return modelMapper.map(existingGroup, GroupDto.class);
+        return new ApiResponse("Attendee added successfully!", true);
+        // return modelMapper.map(existingGroup, GroupDto.class);
     }
 
+    @Override
+    public GroupDto addMembers(UUID groupId, List<UUID> members) {
+        Group existingGroup = null;
+
+        try {
+            existingGroup = groupDao.findById(groupId).orElseThrow(() -> new ResourceNotFoundException("Group", "Id", groupId.toString()));
+        } catch (Exception e) {
+            throw new InternalServerException(e.getMessage());
+        }
+
+        List<String> errors = new ArrayList<>();
+
+        for (int i = 0; i < members.size(); i++) {
+            User user = userDao.findById(members.get(i)).orElse(null);
+            if(user == null) {
+                errors.add(new ResourceNotFoundException("User", "Id", members.get(i).toString()).getMessage());
+            }
+            else if(user.getProfession().equals("student")) {
+                Attendee existingAttendee = attendeeDao.findByUser(user);
+                if(!existingGroup.getAttendees().contains(existingAttendee)) {
+                    existingGroup.getAttendees().add(existingAttendee);
+                }
+            }
+            else if(user.getProfession().equals("teacher")){
+                Coordinator existingCoordinator = coordinatorDao.findByUser(user);
+                if(!existingGroup.getCoordinators().contains(existingCoordinator)) {
+                    existingGroup.getCoordinators().add(existingCoordinator);
+                }
+            }
+        }
+
+        if(!errors.isEmpty()) {
+            throw new MultipleException(errors);
+        }
+
+        return modelMapper.map(groupDao.save(existingGroup), GroupDto.class);
+    }
 }

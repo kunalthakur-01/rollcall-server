@@ -1,7 +1,5 @@
 package com.rollcall.server.dto;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -14,8 +12,10 @@ import lombok.Data;
 @Data
 public class LectureDto {
     private UUID id;
+    
     private User coordinator;
-    private Group groupId;
+
+    private Group group;
 
     @NotEmpty(message = "Lecture name is required")
     private String lectureName;
@@ -24,7 +24,7 @@ public class LectureDto {
     private String description;
 
     @NotEmpty(message = "Enter the date on which the lecture created")
-    private Date createdOnDate;
+    private String createdOnDate;
 
     private int count;
 
@@ -34,5 +34,5 @@ public class LectureDto {
     @NotEmpty(message = "Ending time cannot be null")
     private String endTime;
 
-    private List<String> schedules = new ArrayList<>();
+    private List<String> schedules;
 }

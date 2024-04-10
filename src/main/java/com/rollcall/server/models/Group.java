@@ -71,5 +71,6 @@ public class Group {
     private List<Coordinator> coordinators;
 
     @OneToMany(mappedBy = "group")
+    @JsonIgnore
     private List<Lecture> lectures;
 }

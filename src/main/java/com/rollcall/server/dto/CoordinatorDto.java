@@ -1,6 +1,5 @@
 package com.rollcall.server.dto;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -19,7 +18,7 @@ public class CoordinatorDto {
     @NotEmpty(message = "Roll cannot be null")
     private String rollNo;
 
-    private List<Group> createdGroups = new ArrayList<>();
+    private List<Group> createdGroups;
 
-    private List<Group> otherGroups = new ArrayList<>();
+    private List<Group> otherGroups;
 }

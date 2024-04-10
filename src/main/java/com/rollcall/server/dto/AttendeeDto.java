@@ -1,6 +1,5 @@
 package com.rollcall.server.dto;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -28,5 +27,5 @@ public class AttendeeDto {
     @NotEmpty(message = "College name cannot be null")
     private String collegeName;
 
-    private List<Group> otherGroups = new ArrayList<>();
+    private List<Group> otherGroups;
 }
