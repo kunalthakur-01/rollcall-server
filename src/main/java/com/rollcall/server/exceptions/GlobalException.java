@@ -1,6 +1,7 @@
 package com.rollcall.server.exceptions;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
@@ -58,5 +59,13 @@ public class GlobalException {
         // return new ResponseEntity<>(apiResponse, HttpStatus.valueOf(ex.getCode()));
         // *****************************************************or****************************************************************
         return ResponseEntity.status(ex.getCode()).body(apiResponse);
+    }
+
+    @ExceptionHandler(MultipleException.class)
+    public ResponseEntity<List<String>> handleMultipleExceptions( MultipleException ex) {
+        List<String> errs = ex.getErrros();
+        // return new ResponseEntity<>(resp, HttpStatus.valueOf(500));
+        // *****************************************************or***************************************************************
+        return ResponseEntity.status(500).body(errs);
     }
 }
