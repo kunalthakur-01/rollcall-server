@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import com.rollcall.server.models.Group;
+import com.rollcall.server.models.Lecture;
 import com.rollcall.server.models.User;
 
 import jakarta.validation.constraints.NotEmpty;
@@ -21,4 +22,6 @@ public class CoordinatorDto {
     private List<Group> createdGroups;
 
     private List<Group> otherGroups;
+
+    private List<Lecture> lectures;
 }

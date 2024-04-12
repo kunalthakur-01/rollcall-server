@@ -10,4 +10,6 @@ import com.rollcall.server.dto.GroupDto;
 public interface GroupServices {
     public GroupDto createNewGroup(GroupDto groupDto, UUID attendeeId);
     public List<GroupDto> getAllGroups();
+    public GroupDto getGroupByLectureId(UUID lectureId);
+    public GroupDto getGroupById(UUID groupId);
 }

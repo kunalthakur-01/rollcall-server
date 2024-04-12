@@ -69,7 +69,7 @@ public class LectureServicesImpl implements LectureServices {
         }
 
         try {
-            lecture.setCoordinator(exitingUser);
+            lecture.setCoordinator(existingCoordinator);
             lecture.setGroup(existingGroup);
             lectureToDto(lectureDao.save(lecture));
         } catch (Exception e) {

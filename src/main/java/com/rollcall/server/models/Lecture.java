@@ -15,7 +15,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
 
@@ -27,10 +26,9 @@ public class Lecture {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @OneToOne
-    @JoinColumn(name = "coordinator")
+    @ManyToOne
     @JsonIgnore
-    private User coordinator;
+    private Coordinator coordinator;
 
     @ManyToOne
     @JoinColumn(name = "groupId")

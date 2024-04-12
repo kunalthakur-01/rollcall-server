@@ -3,8 +3,8 @@ package com.rollcall.server.dto;
 import java.util.List;
 import java.util.UUID;
 
+import com.rollcall.server.models.Coordinator;
 import com.rollcall.server.models.Group;
-import com.rollcall.server.models.User;
 
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
@@ -13,7 +13,7 @@ import lombok.Data;
 public class LectureDto {
     private UUID id;
     
-    private User coordinator;
+    private Coordinator coordinator;
 
     private Group group;
 

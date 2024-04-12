@@ -32,6 +32,16 @@ public class GroupController {
         // return null;
     }
 
+    @GetMapping("/lecture/{lectureId}")
+    public ResponseEntity<GroupDto> getGroupByLectureId(@PathVariable("lectureId") UUID lectureId){
+        return ResponseEntity.status(200).body(groupServices.getGroupByLectureId(lectureId));
+    }
+
+    @GetMapping("/{groupId}")
+    public ResponseEntity<GroupDto> getGroupById(@PathVariable("groupId") UUID groupId){
+        return ResponseEntity.status(200).body(groupServices.getGroupById(groupId));
+    }
+
     @GetMapping("all")
     public ResponseEntity<List<GroupDto>> getAllGroups(){
         // System.out.println(adminId);

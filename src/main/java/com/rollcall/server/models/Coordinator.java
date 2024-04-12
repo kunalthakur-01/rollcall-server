@@ -48,4 +48,8 @@ public class Coordinator {
     // @JsonManagedReference
     @JsonIgnore
     private List<Group> otherGroups;
+
+    @OneToMany(mappedBy = "coordinator")
+    @JsonIgnore
+    private List<Lecture> lectures;
 }
