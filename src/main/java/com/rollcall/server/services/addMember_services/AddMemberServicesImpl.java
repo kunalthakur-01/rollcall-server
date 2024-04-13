@@ -130,23 +130,29 @@ public class AddMemberServicesImpl implements AddMemberServices {
 
         List<String> errors = new ArrayList<>();
 
-        for (int i = 0; i < members.size(); i++) {
-            User user = userDao.findById(members.get(i)).orElse(null);
-            if(user == null) {
-                errors.add(new ResourceNotFoundException("User", "Id", members.get(i).toString()).getMessage());
-            }
-            else if(user.getProfession().equals("student")) {
-                Attendee existingAttendee = attendeeDao.findByUser(user);
-                if(!existingGroup.getAttendees().contains(existingAttendee)) {
-                    existingGroup.getAttendees().add(existingAttendee);
+        try {
+            for (int i = 0; i < members.size(); i++) {
+                User user = userDao.findById(members.get(i)).orElse(null);
+                if(user == null) {
+                    errors.add(new ResourceNotFoundException("User", "Id", members.get(i).toString()).getMessage());
+                }
+                else if(user.getProfession().equals("student")) {
+                    Attendee existingAttendee = attendeeDao.findByUser(user);
+                    if(!existingGroup.getAttendees().contains(existingAttendee)) {
+                        existingGroup.getAttendees().add(existingAttendee);
+                    }
+                }
+                else if(user.getProfession().equals("teacher")){
+                    Coordinator existingCoordinator = coordinatorDao.findByUser(user);
+                    if(!existingGroup.getCoordinators().contains(existingCoordinator)) {
+                        existingGroup.getCoordinators().add(existingCoordinator);
+                    }
                 }
             }
-            else if(user.getProfession().equals("teacher")){
-                Coordinator existingCoordinator = coordinatorDao.findByUser(user);
-                if(!existingGroup.getCoordinators().contains(existingCoordinator)) {
-                    existingGroup.getCoordinators().add(existingCoordinator);
-                }
-            }
+            
+            groupDao.save(existingGroup);
+        } catch (Exception e) {
+            throw new InternalServerException(e.getMessage());
         }
 
         if(!errors.isEmpty()) {

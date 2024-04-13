@@ -1,6 +1,8 @@
 package com.rollcall.server.services.user_services;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
@@ -46,18 +48,19 @@ public class UserServicesImpl implements UserServices {
         User existingUser = null;
 
         try {
-            existingUser = userDao.findByEmailOrUserNameOrPhone(userDto.getEmail(), userDto.getUserName(), userDto.getPhone());
+            existingUser = userDao.findByEmailOrUserNameOrPhone(userDto.getEmail(), userDto.getUserName(),
+                    userDto.getPhone());
         } catch (Exception e) {
             e.printStackTrace();
             throw new InternalServerException(e.getMessage());
         }
 
-        if(existingUser != null){
+        if (existingUser != null) {
             throw new ResourceAlreadyExistException("User already exist with this resource!!");
         }
 
-        if(attendee != null) {
-            try { 
+        if (attendee != null) {
+            try {
                 existingUser = userDao.save(user);
                 attendee.setUser(existingUser);
                 attendeeDao.save(attendee);
@@ -67,8 +70,8 @@ public class UserServicesImpl implements UserServices {
             }
         }
 
-        if(coordinator != null) {
-            try { 
+        if (coordinator != null) {
+            try {
                 existingUser = userDao.save(user);
                 coordinator.setUser(existingUser);
                 coordinatorDao.save(coordinator);
@@ -79,13 +82,15 @@ public class UserServicesImpl implements UserServices {
             }
         }
 
-        // try { 
-        //     existingUser = userDao.save(user);
+        // try {
+        // existingUser = userDao.save(user);
         // } catch (Exception e) {
-        //     e.printStackTrace();
-        //     throw new InternalServerException(e.getMessage());
-        //     // return new ResponseEntity<>("Something went wrong!!", HttpStatus.INTERNAL_SERVER_ERROR);
-        //     // return new ResponseEntity<>(new ResourceNotFoundException("user", "Id", user.getId()), HttpStatus.INTERNAL_SERVER_ERROR);
+        // e.printStackTrace();
+        // throw new InternalServerException(e.getMessage());
+        // // return new ResponseEntity<>("Something went wrong!!",
+        // HttpStatus.INTERNAL_SERVER_ERROR);
+        // // return new ResponseEntity<>(new ResourceNotFoundException("user", "Id",
+        // user.getId()), HttpStatus.INTERNAL_SERVER_ERROR);
         // }
         // return new ResponseEntity<>(userToDto(existingUser), HttpStatus.CREATED);
         return ResponseEntity.status(201).body(userToDto(existingUser));
@@ -101,11 +106,11 @@ public class UserServicesImpl implements UserServices {
             throw new InternalServerException("Signup failed!!");
         }
 
-        if(user == null) {
+        if (user == null) {
             throw new ResourceNotFoundException("user", "email", email);
         }
 
-        if(!user.getPassword().equals(password)) {
+        if (!user.getPassword().equals(password)) {
             throw new CustomException("Incorrect password", 400);
         }
 
@@ -113,13 +118,34 @@ public class UserServicesImpl implements UserServices {
     }
 
     @Override
+    public List<UserDto> getUsersBySearch(List<UUID> alreadyAddedUsers, UUID userId, String searchBy) {
+        List<User> matchedusers = new ArrayList<>();
+        List<User> filteredUsers = new ArrayList<>();
+
+        try {
+            matchedusers = userDao.findByUserNameContainingOrNameContaining(searchBy, searchBy);
+
+            for (User user : matchedusers) {
+                if (!alreadyAddedUsers.contains(user.getId())) {
+                    filteredUsers.add(user);
+                }
+            }
+        } catch (Exception e) {
+            throw new InternalServerException(e.getMessage());
+        }
+        return filteredUsers.stream().map(user -> userToDto(user)).collect(Collectors.toList());
+    }
+
+    @Override
     public List<AttendeeDto> getAllAttendees() {
-        return attendeeDao.findAll().stream().map(a -> modelMapper.map(a, AttendeeDto.class)).collect(Collectors.toList());
+        return attendeeDao.findAll().stream().map(a -> modelMapper.map(a, AttendeeDto.class))
+                .collect(Collectors.toList());
     }
 
     @Override
     public List<CoordinatorDto> getAllCoordinators() {
-        return coordinatorDao.findAll().stream().map(c -> modelMapper.map(c, CoordinatorDto.class)).collect(Collectors.toList());
+        return coordinatorDao.findAll().stream().map(c -> modelMapper.map(c, CoordinatorDto.class))
+                .collect(Collectors.toList());
     }
 
     public UserDto userToDto(User user) {
@@ -132,4 +158,3 @@ public class UserServicesImpl implements UserServices {
         return user;
     }
 }
-
