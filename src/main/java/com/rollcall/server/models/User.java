@@ -1,5 +1,6 @@
 package com.rollcall.server.models;
 
+import java.util.Date;
 import java.util.UUID;
 
 import jakarta.persistence.Column;
@@ -37,5 +38,5 @@ public class User {
 
     private String profession;
 
-    private String dob;
+    private Date dob;
 }

@@ -39,7 +39,7 @@ public class Coordinator {
 
     private String rollNo;
 
-    @OneToMany(mappedBy = "coordinator")
+    @OneToMany(mappedBy = "admin")
     // @JsonManagedReference
     @JsonIgnore
     private List<Group> createdGroups;

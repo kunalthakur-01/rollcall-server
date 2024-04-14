@@ -64,7 +64,7 @@ public class LectureServicesImpl implements LectureServices {
 
         Boolean isContain = existingGroup.getCoordinators().contains(existingCoordinator);
         
-        if(existingCoordinator != existingGroup.getCoordinator() && !isContain) {
+        if(existingCoordinator != existingGroup.getAdmin() && !isContain) {
             throw new CustomException("Coordinator not in the group", 400);
         }
 

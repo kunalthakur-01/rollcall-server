@@ -1,5 +1,6 @@
 package com.rollcall.server.dto;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -23,8 +24,8 @@ public class LectureDto {
     @NotEmpty(message = "Description cannot be null")
     private String description;
 
-    @NotEmpty(message = "Enter the date on which the lecture created")
-    private String createdOnDate;
+    // @NotEmpty(message = "Enter the date on which the lecture created")
+    private Date createdOnDate = new Date();
 
     private int count;
 

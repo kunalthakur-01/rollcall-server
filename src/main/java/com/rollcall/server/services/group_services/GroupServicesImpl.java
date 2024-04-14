@@ -1,6 +1,8 @@
 package com.rollcall.server.services.group_services;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -9,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.rollcall.server.dao.AttendeeDao;
 import com.rollcall.server.dao.CoordinatorDao;
 import com.rollcall.server.dao.GroupDao;
 import com.rollcall.server.dao.LectureDao;
@@ -18,6 +21,7 @@ import com.rollcall.server.exceptions.CustomException;
 import com.rollcall.server.exceptions.InternalServerException;
 import com.rollcall.server.exceptions.ResourceAlreadyExistException;
 import com.rollcall.server.exceptions.ResourceNotFoundException;
+import com.rollcall.server.models.Attendee;
 import com.rollcall.server.models.Coordinator;
 import com.rollcall.server.models.Group;
 import com.rollcall.server.models.Lecture;
@@ -37,6 +41,9 @@ public class GroupServicesImpl implements GroupServices {
 
     @Autowired
     private LectureDao lectureDao;
+
+    @Autowired
+    private AttendeeDao attendeeDao;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -63,7 +70,7 @@ public class GroupServicesImpl implements GroupServices {
         Group newGroup = null;
 
         try {
-            newGroup = groupDao.findByCoordinatorAndGroupName(existingCoordinator, group.getGroupName());
+            newGroup = groupDao.findByAdminAndGroupName(existingCoordinator, group.getGroupName());
         } catch (Exception e) {
 
         }
@@ -74,7 +81,7 @@ public class GroupServicesImpl implements GroupServices {
 
         try {
             // existingCoordinator.getGroups().add(group); // optional or not compulsary
-            group.setCoordinator(existingCoordinator);
+            group.setAdmin(existingCoordinator);
 
             newGroup = groupDao.save(group);
 
@@ -109,12 +116,48 @@ public class GroupServicesImpl implements GroupServices {
         Group existingGroup = null;
 
         try {
-            existingGroup = groupDao.findById(groupId).orElseThrow(() -> new ResourceNotFoundException("Group", "Id", groupId.toString()));
+            existingGroup = groupDao.findById(groupId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Group", "Id", groupId.toString()));
         } catch (Exception e) {
             throw new InternalServerException(e.getMessage());
         }
-        
+
         return groupToDto(existingGroup);
+    }
+
+    @Override
+    public Map<String, List<Group>> getAllGroupsById(UUID userId, String profession) {
+        Coordinator existingCoordinator = null;
+        Attendee existingAttendee = null;
+        Map<String, List<Group>> res = new HashMap<>();
+
+        try {
+            User user = userDao.findById(userId)
+                    .orElseThrow(() -> new ResourceNotFoundException("User", "Id", userId.toString()));
+
+            if (profession.equals("student")) {
+                existingAttendee = attendeeDao.findByUser(user);
+
+                if (existingAttendee == null) {
+                    throw new CustomException("Invalid Attendee Id", 400);
+                }
+
+                res.put("otherGroups", existingAttendee.getOtherGroups());
+                return res;
+            } else {
+                existingCoordinator = coordinatorDao.findByUser(user);
+
+                if (existingCoordinator == null) {
+                    throw new CustomException("Invalid Coordinator Id", 400);
+                }
+
+                res.put("otherGroups", existingCoordinator.getOtherGroups());
+                res.put("createdGroups", existingCoordinator.getCreatedGroups());
+                return res;
+            }
+        } catch (Exception e) {
+            throw new InternalServerException(e.getMessage());
+        }    
     }
 
     @Override

@@ -14,7 +14,7 @@ import lombok.Data;
 public class GroupDto {
     private UUID id;
 
-    private Coordinator coordinator;
+    private Coordinator admin;
 
     @NotEmpty(message = "Group name cannot be null")
     private String groupName;

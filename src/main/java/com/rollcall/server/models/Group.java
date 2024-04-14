@@ -36,9 +36,8 @@ public class Group {
     private UUID id;
 
     @ManyToOne
-    @JoinColumn(name = "admin")
     @JsonBackReference
-    private Coordinator coordinator;
+    private Coordinator admin;
 
     private String groupName;
 

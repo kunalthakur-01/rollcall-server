@@ -1,5 +1,6 @@
 package com.rollcall.server.dto;
 
+import java.util.Date;
 import java.util.UUID;
 
 import jakarta.validation.constraints.Email;
@@ -41,6 +42,5 @@ public class UserDto {
     @NotEmpty(message = "Profession cannot be null")
     private String profession;
 
-    @NotEmpty(message = "Date of birth cannot be null")
-    private String dob;
+    private Date dob;
 }

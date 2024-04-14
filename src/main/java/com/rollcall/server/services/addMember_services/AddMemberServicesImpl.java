@@ -58,7 +58,7 @@ public class AddMemberServicesImpl implements AddMemberServices {
             throw new CustomException("Invalid user", 404);
         }
 
-        if (!existingGroup.getCoordinator().equals(existingCoordinator)) {
+        if (!existingGroup.getAdmin().equals(existingCoordinator)) {
             Boolean hasInGroup = existingGroup.getCoordinators().contains(existingCoordinator);
 
             if (hasInGroup) {

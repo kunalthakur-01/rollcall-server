@@ -1,6 +1,7 @@
 package com.rollcall.server.controllers;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.rollcall.server.dto.GroupDto;
+import com.rollcall.server.models.Group;
 import com.rollcall.server.services.group_services.GroupServices;
 
 import jakarta.validation.Valid;
@@ -42,6 +44,11 @@ public class GroupController {
     @GetMapping("/{groupId}")
     public ResponseEntity<GroupDto> getGroupById(@PathVariable("groupId") UUID groupId){
         return ResponseEntity.status(200).body(groupServices.getGroupById(groupId));
+    }
+
+    @GetMapping("/{profession}/{userId}")
+    public ResponseEntity<Map<String, List<Group>>> getAllGroupsByUserId(@PathVariable("profession") String profession, @PathVariable("userId") UUID userId){
+        return ResponseEntity.status(200).body(groupServices.getAllGroupsById(userId, profession));
     }
 
     @GetMapping("all")
