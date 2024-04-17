@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import com.rollcall.server.models.Attendance;
 import com.rollcall.server.models.Coordinator;
 import com.rollcall.server.models.Group;
 
@@ -36,4 +37,6 @@ public class LectureDto {
     private String endTime;
 
     private List<String> schedules;
+
+    private List<Attendance> attendances;
 }

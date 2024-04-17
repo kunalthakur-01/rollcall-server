@@ -17,6 +17,7 @@ import com.rollcall.server.dto.LectureDto;
 import com.rollcall.server.exceptions.CustomException;
 import com.rollcall.server.exceptions.InternalServerException;
 import com.rollcall.server.exceptions.ResourceNotFoundException;
+import com.rollcall.server.models.Attendee;
 import com.rollcall.server.models.Coordinator;
 import com.rollcall.server.models.Group;
 import com.rollcall.server.models.Lecture;
@@ -51,20 +52,22 @@ public class LectureServicesImpl implements LectureServices {
         Coordinator existingCoordinator = null;
 
         try {
-            exitingUser = userDao.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", "Id", userId.toString()));
-            existingGroup = groupDao.findById(groupId).orElseThrow(() -> new ResourceNotFoundException("Group", "Id", String.format("%s", groupId)));
+            exitingUser = userDao.findById(userId)
+                    .orElseThrow(() -> new ResourceNotFoundException("User", "Id", userId.toString()));
+            existingGroup = groupDao.findById(groupId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Group", "Id", String.format("%s", groupId)));
             existingCoordinator = coordinatorDao.findByUser(exitingUser);
         } catch (Exception e) {
             throw new InternalServerException(e.getMessage());
         }
 
-        if(existingCoordinator == null) {
+        if (existingCoordinator == null) {
             throw new CustomException("Invalid Coordinator Id", 400);
         }
 
         Boolean isContain = existingGroup.getCoordinators().contains(existingCoordinator);
-        
-        if(existingCoordinator != existingGroup.getAdmin() && !isContain) {
+
+        if (existingCoordinator != existingGroup.getAdmin() && !isContain) {
             throw new CustomException("Coordinator not in the group", 400);
         }
 
@@ -75,7 +78,63 @@ public class LectureServicesImpl implements LectureServices {
         } catch (Exception e) {
             throw new InternalServerException(e.getMessage());
         }
-        return new ApiResponse("Lecture created successfully!", true); 
+        return new ApiResponse("Lecture created successfully!", true);
+    }
+
+    @Override
+    public List<Lecture> getLecturesByUserId(UUID userId, String onDate) {
+        User existingUser = null;
+        Coordinator existingCoordinator = null;
+
+        try {
+            existingUser = userDao.findById(userId)
+                    .orElseThrow(() -> new ResourceNotFoundException("User", "Id", userId.toString()));
+            existingCoordinator = coordinatorDao.findByUser(existingUser);
+        } catch (Exception e) {
+            throw new InternalServerException(e.getMessage());
+        }
+
+        if (existingCoordinator == null)
+            throw new ResourceNotFoundException("Coordinator", "Id", userId.toString());
+        
+
+        // String dateString = onDate.split("T")[0];
+
+        // int year = Integer.parseInt(dateString.split("-")[0]);
+        // int month = Integer.parseInt(dateString.split("-")[1]);
+        // int date = Integer.parseInt(dateString.split("-")[2]);
+        // System.out.println(date);
+        // System.out.println(month);
+        // System.out.println(year);
+
+
+        // System.out.println(date.split("-")[0]); 
+        // System.out.println(date.split("-")[1]); 
+        // System.out.println(date.split("-")[2]); 
+            
+        // DateTimeFormatter dtf = DateTimeFormatter.RFC_1123_DATE_TIME;
+        // LocalDateTime ldt = LocalDateTime.parse(onDate, dtf);
+
+        // System.out.println(ldt);
+
+        // Calendar calendar = Calendar.getInstance();
+        // List<Lecture> allLectures = new ArrayList<>();
+
+        // for (Lecture lecture : existingCoordinator.getLectures()) {
+        //     calendar.setTime(lecture.getCreatedOnDate());
+        //     System.out.println(calendar.get(Calendar.DATE));
+        //     System.out.println(date);
+        //     System.out.println("*************************");
+        //     if(date != calendar.get(Calendar.DATE)) continue;
+        //     if(month != calendar.get(Calendar.MONTH) + 1) continue;
+        //     if(year != calendar.get(Calendar.YEAR)) continue;
+
+        //     allLectures.add(lecture);
+        // }
+
+        // return allLectures;
+
+        return existingCoordinator.getLectures();
     }
 
     @Override
@@ -87,11 +146,24 @@ public class LectureServicesImpl implements LectureServices {
     public LectureDto getLectureById(UUID lectId) {
         Lecture existingLecture = null;
         try {
-            existingLecture = lectureDao.findById(lectId).orElseThrow(() -> new ResourceNotFoundException("Lecture", "Id", lectId.toString()));
+            existingLecture = lectureDao.findById(lectId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Lecture", "Id", lectId.toString()));
         } catch (Exception e) {
             throw new InternalServerException(e.getMessage());
         }
         return lectureToDto(existingLecture);
+    }
+
+    @Override
+    public List<Attendee> getAttendeesBylectureId(UUID lectureId) {
+        Lecture existingLecture = null;
+        try {
+            existingLecture = lectureDao.findById(lectureId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Lecture", "Id", lectureId.toString()));
+        } catch (Exception e) {
+            throw new InternalServerException(e.getMessage());
+        }
+        return existingLecture.getGroup().getAttendees();
     }
 
     public LectureDto lectureToDto(Lecture lecture) {

@@ -3,6 +3,7 @@ package com.rollcall.server.dto;
 import java.util.List;
 import java.util.UUID;
 
+import com.rollcall.server.models.Attendance;
 import com.rollcall.server.models.Group;
 import com.rollcall.server.models.User;
 
@@ -28,4 +29,6 @@ public class AttendeeDto {
     private String collegeName;
 
     private List<Group> otherGroups;
+
+    private List<Attendance> attendances;
 }

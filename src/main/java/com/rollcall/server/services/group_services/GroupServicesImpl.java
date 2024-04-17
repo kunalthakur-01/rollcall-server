@@ -157,7 +157,7 @@ public class GroupServicesImpl implements GroupServices {
             }
         } catch (Exception e) {
             throw new InternalServerException(e.getMessage());
-        }    
+        }
     }
 
     @Override
