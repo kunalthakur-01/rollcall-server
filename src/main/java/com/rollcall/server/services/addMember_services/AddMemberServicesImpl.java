@@ -144,7 +144,7 @@ public class AddMemberServicesImpl implements AddMemberServices {
                 }
                 else if(user.getProfession().equals("teacher")){
                     Coordinator existingCoordinator = coordinatorDao.findByUser(user);
-                    if(!existingGroup.getCoordinators().contains(existingCoordinator)) {
+                    if(!existingGroup.getCoordinators().contains(existingCoordinator) && !existingGroup.getAdmin().equals(existingCoordinator)) {
                         existingGroup.getCoordinators().add(existingCoordinator);
                     }
                 }
