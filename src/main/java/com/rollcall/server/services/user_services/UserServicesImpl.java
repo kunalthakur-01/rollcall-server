@@ -124,6 +124,7 @@ public class UserServicesImpl implements UserServices {
 
         try {
             matchedusers = userDao.findByUserNameContainingOrNameContaining(searchBy, searchBy);
+            // User user = userDao.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", "Id", userId.toString()));
 
             for (User user : matchedusers) {
                 if (!alreadyAddedUsers.contains(user.getId())) {
@@ -133,7 +134,9 @@ public class UserServicesImpl implements UserServices {
         } catch (Exception e) {
             throw new InternalServerException(e.getMessage());
         }
-        return filteredUsers.stream().map(user -> userToDto(user)).collect(Collectors.toList());
+
+        List<User> removedAdmin = filteredUsers.stream().filter(user -> !user.getId().equals(userId)).collect(Collectors.toList());
+        return removedAdmin.stream().map(user -> userToDto(user)).collect(Collectors.toList());
     }
 
     @Override
