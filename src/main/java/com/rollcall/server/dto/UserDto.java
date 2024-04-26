@@ -3,6 +3,8 @@ package com.rollcall.server.dto;
 import java.util.Date;
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
@@ -29,6 +31,7 @@ public class UserDto {
 
     @NotEmpty(message = "Password cannot be null")
     @Size(min = 6, max = 20, message = "Password must be between 6 to 20")
+    @JsonIgnore
     private String password;
 
     // @Pattern(regexp = "\'^[\\w\\-\\.]+@([\\w-]+\\.)+[\\w-]{2,}$\'gm")

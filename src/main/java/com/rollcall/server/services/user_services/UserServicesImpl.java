@@ -8,6 +8,11 @@ import java.util.stream.Collectors;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,7 +29,9 @@ import com.rollcall.server.exceptions.InternalServerException;
 import com.rollcall.server.exceptions.ResourceAlreadyExistException;
 import com.rollcall.server.models.Attendee;
 import com.rollcall.server.models.Coordinator;
+import com.rollcall.server.models.JwtResponse;
 import com.rollcall.server.models.User;
+import com.rollcall.server.security.JwtHelper;
 
 @Service
 public class UserServicesImpl implements UserServices {
@@ -40,6 +47,18 @@ public class UserServicesImpl implements UserServices {
 
     @Autowired
     private ModelMapper modelMapper;
+
+    @Autowired
+    private JwtHelper jwtHelper;
+
+    @Autowired
+    private UserDetailsService userDetailsService;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
 
     @Override
     @Transactional
@@ -58,6 +77,8 @@ public class UserServicesImpl implements UserServices {
         if (existingUser != null) {
             throw new ResourceAlreadyExistException("User already exist with this resource!!");
         }
+
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         if (attendee != null) {
             try {
@@ -118,6 +139,21 @@ public class UserServicesImpl implements UserServices {
     }
 
     @Override
+    public JwtResponse login2(String email, String password) {
+        this.doAuthenticate(email, password);
+
+        User userDetails = (User) userDetailsService.loadUserByUsername(email);
+        
+        String token = this.jwtHelper.generateToken(userDetails);
+
+        JwtResponse response = JwtResponse.builder()
+                .jwtToken(token)
+                .user(userDetails).build();
+
+        return response;
+    }
+
+    @Override
     public List<UserDto> getUsersBySearch(List<UUID> alreadyAddedUsers, UUID userId, String searchBy) {
         List<User> matchedusers = new ArrayList<>();
         List<User> filteredUsers = new ArrayList<>();
@@ -159,5 +195,15 @@ public class UserServicesImpl implements UserServices {
     public User dtoToUser(UserDto userDto) {
         User user = this.modelMapper.map(userDto, User.class);
         return user;
+    }
+
+    private void doAuthenticate(String email, String password) {
+
+        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(email, password);
+        try {
+            authenticationManager.authenticate(authentication);
+        } catch (BadCredentialsException e) {
+            throw new BadCredentialsException("Credentials Invalid !!");
+        }
     }
 }

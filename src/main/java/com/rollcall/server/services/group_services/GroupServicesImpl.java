@@ -26,6 +26,7 @@ import com.rollcall.server.models.Coordinator;
 import com.rollcall.server.models.Group;
 import com.rollcall.server.models.Lecture;
 import com.rollcall.server.models.User;
+import com.rollcall.server.payloads.ApiResponse;
 
 @Service
 public class GroupServicesImpl implements GroupServices {
@@ -158,6 +159,17 @@ public class GroupServicesImpl implements GroupServices {
         } catch (Exception e) {
             throw new InternalServerException(e.getMessage());
         }
+    }
+
+    @Override
+    public ApiResponse deleteGroupById(UUID groupId) {
+        try {
+            groupDao.deleteById(groupId);
+        } catch (Exception e) {
+            throw new InternalServerException(e.getMessage());
+        }
+
+        return new ApiResponse("Group deleted successfully", true);
     }
 
     @Override

@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.rollcall.server.dto.AttendeeDto;
 import com.rollcall.server.dto.CoordinatorDto;
 import com.rollcall.server.dto.UserDto;
+import com.rollcall.server.models.JwtRequest;
+import com.rollcall.server.models.JwtResponse;
 import com.rollcall.server.models.User;
 import com.rollcall.server.models.UserAttendee;
 import com.rollcall.server.models.UserCoordinator;
@@ -54,6 +56,14 @@ public class UserController {
         String password = (String) body.get("password");
 
         return userServices.login(email, password);
+    }
+
+    @PostMapping("/jwt/login")
+    public ResponseEntity<JwtResponse> login2(@RequestBody JwtRequest jwtRequest) {
+        String email = jwtRequest.getEmail();
+        String password = jwtRequest.getPassword();
+
+        return ResponseEntity.ok().body(userServices.login2(email, password));                
     }
 
     @GetMapping("/all/attendees")

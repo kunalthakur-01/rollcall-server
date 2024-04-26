@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -67,5 +68,11 @@ public class GlobalException {
         // return new ResponseEntity<>(resp, HttpStatus.valueOf(500));
         // *****************************************************or***************************************************************
         return ResponseEntity.status(500).body(errs);
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ApiResponse> exceptionHandler() {
+        ApiResponse apiResponse = new ApiResponse("Credentials Invalid !!", false);
+        return ResponseEntity.status(400).body(apiResponse);
     }
 }

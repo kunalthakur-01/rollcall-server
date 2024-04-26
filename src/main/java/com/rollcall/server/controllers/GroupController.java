@@ -7,6 +7,7 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.rollcall.server.dto.GroupDto;
 import com.rollcall.server.models.Group;
+import com.rollcall.server.payloads.ApiResponse;
 import com.rollcall.server.services.group_services.GroupServices;
 
 import jakarta.validation.Valid;
@@ -49,6 +51,11 @@ public class GroupController {
     @GetMapping("/{profession}/{userId}")
     public ResponseEntity<Map<String, List<Group>>> getAllGroupsByUserId(@PathVariable("profession") String profession, @PathVariable("userId") UUID userId){
         return ResponseEntity.status(200).body(groupServices.getAllGroupsById(userId, profession));
+    }
+
+    @DeleteMapping("/delete/{groupId}")
+    public ResponseEntity<ApiResponse> deleteGroupById(@PathVariable("groupId") UUID groupId) {
+        return ResponseEntity.ok().body(groupServices.deleteGroupById(groupId));
     }
 
     @GetMapping("all")

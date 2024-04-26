@@ -69,7 +69,7 @@ public class Group {
     @JsonIgnore
     private List<Coordinator> coordinators;
 
-    @OneToMany(mappedBy = "group")
+    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Lecture> lectures;
 }
