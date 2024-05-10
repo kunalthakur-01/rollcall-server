@@ -1,11 +1,13 @@
 package com.rollcall.server.security;
 
 import java.security.Key;
+import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.function.Function;
 
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -55,10 +57,25 @@ public class JwtHelper {
         return expiration.before(new Date());
     }
 
+    public String populateAuthorities(Collection<? extends GrantedAuthority> authorities) {
+        Set<String> authoritiesSet = new HashSet<>();
+
+        for (GrantedAuthority authority : authorities) {
+            authoritiesSet.add(authority.getAuthority());
+        }
+
+        return String.join(",", authoritiesSet);
+    }
+
     // generate token for user
     public String generateToken(UserDetails userDetails) {
-        Map<String, Object> claims = new HashMap<>();
-        return doGenerateToken(claims, userDetails.getUsername());
+        // Map<String, Object> claims = new HashMap<>();
+        // return doGenerateToken(claims, userDetails.getUsername());
+
+        return Jwts.builder().claim("authorities", populateAuthorities(userDetails.getAuthorities()))
+                .setSubject(userDetails.getUsername()).setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY * 1000))
+                .signWith(getSignKey(), SignatureAlgorithm.HS512).compact();
     }
 
     // while creating the token -
@@ -67,12 +84,15 @@ public class JwtHelper {
     // 3. According to JWS Compact
     // Serialization(https://tools.ietf.org/html/draft-ietf-jose-json-web-signature-41#section-3.1)
     // compaction of the JWT to a URL-safe string
-    private String doGenerateToken(Map<String, Object> claims, String subject) {
 
-        return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY * 1000))
-                .signWith(getSignKey(), SignatureAlgorithm.HS512).compact();
-    }
+    // private String doGenerateToken(Map<String, Object> claims, String subject) {
+
+    // return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new
+    // Date(System.currentTimeMillis()))
+    // .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY *
+    // 1000))
+    // .signWith(getSignKey(), SignatureAlgorithm.HS512).compact();
+    // }
 
     private Key getSignKey() {
         byte[] keyBytes = Decoders.BASE64.decode(SECRET);
