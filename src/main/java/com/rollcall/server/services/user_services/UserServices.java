@@ -14,7 +14,7 @@ import com.rollcall.server.models.JwtResponse;
 import com.rollcall.server.models.User;
 
 public interface UserServices {
-    public ResponseEntity<UserDto> signup(UserDto userDto, Attendee attendee, Coordinator coordinator);
+    public ResponseEntity<JwtResponse> signup(UserDto userDto, Attendee attendee, Coordinator coordinator);
 
     public ResponseEntity<User> login(String email, String password);
     public JwtResponse login2(String email, String password);

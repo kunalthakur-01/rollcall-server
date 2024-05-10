@@ -62,7 +62,7 @@ public class UserServicesImpl implements UserServices {
 
     @Override
     @Transactional
-    public ResponseEntity<UserDto> signup(UserDto userDto, Attendee attendee, Coordinator coordinator) {
+    public ResponseEntity<JwtResponse> signup(UserDto userDto, Attendee attendee, Coordinator coordinator) {
         User user = dtoToUser(userDto);
         User existingUser = null;
 
@@ -103,6 +103,20 @@ public class UserServicesImpl implements UserServices {
             }
         }
 
+        String token = this.jwtHelper.generateToken(existingUser);
+
+        JwtResponse response = JwtResponse.builder()
+                .id(existingUser.getId())
+                .jwtToken(token)
+                .email(existingUser.getUsername())
+                .userName(existingUser.getUserName())
+                .profession(existingUser.getProfession())
+                .build();
+
+        return ResponseEntity.status(201).body(response);
+
+        // return ResponseEntity.status(201).body(userToDto(existingUser));
+
         // try {
         // existingUser = userDao.save(user);
         // } catch (Exception e) {
@@ -114,7 +128,6 @@ public class UserServicesImpl implements UserServices {
         // user.getId()), HttpStatus.INTERNAL_SERVER_ERROR);
         // }
         // return new ResponseEntity<>(userToDto(existingUser), HttpStatus.CREATED);
-        return ResponseEntity.status(201).body(userToDto(existingUser));
     }
 
     @Override
@@ -147,8 +160,12 @@ public class UserServicesImpl implements UserServices {
         String token = this.jwtHelper.generateToken(userDetails);
 
         JwtResponse response = JwtResponse.builder()
+                .id(userDetails.getId())
                 .jwtToken(token)
-                .user(userDetails).build();
+                .email(userDetails.getUsername())
+                .userName(userDetails.getUserName())
+                .profession(userDetails.getProfession())
+                .build();
 
         return response;
     }

@@ -36,7 +36,7 @@ public class UserController {
 
     @PostMapping("/attendee/signup")
     // @GetMapping("signup")
-    public ResponseEntity<UserDto> signupAttendee(@Valid @RequestBody UserAttendee userAttendee) {
+    public ResponseEntity<JwtResponse> signupAttendee(@Valid @RequestBody UserAttendee userAttendee) {
         // System.out.println(userAttendee);
         return userServices.signup(userAttendee.getUser(), userAttendee.getAttendee(), null);
         // return null;
@@ -44,13 +44,13 @@ public class UserController {
 
     @PostMapping("/coordinator/signup")
     // @GetMapping("signup")
-    public ResponseEntity<UserDto> signupCoordinator(@Valid @RequestBody UserCoordinator userCoordinator) {
-        // System.out.println(userCoordinator);
+    public ResponseEntity<JwtResponse> signupCoordinator(@Valid @RequestBody UserCoordinator userCoordinator) {
+        System.out.println(userCoordinator);
         return userServices.signup(userCoordinator.getUser(), null, userCoordinator.getCoordinator());
         // return null;
     }
 
-    @PostMapping("/login")
+    @PostMapping("/login2")
     public ResponseEntity<User> login(@RequestBody Map<String, Object> body) {
         String email = (String) body.get("email");
         String password = (String) body.get("password");
@@ -58,7 +58,7 @@ public class UserController {
         return userServices.login(email, password);
     }
 
-    @PostMapping("/jwt/login")
+    @PostMapping("/login")
     public ResponseEntity<JwtResponse> login2(@RequestBody JwtRequest jwtRequest) {
         String email = jwtRequest.getEmail();
         String password = jwtRequest.getPassword();

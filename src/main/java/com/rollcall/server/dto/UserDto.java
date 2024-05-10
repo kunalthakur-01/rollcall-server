@@ -3,8 +3,10 @@ package com.rollcall.server.dto;
 import java.util.Date;
 import java.util.UUID;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.rollcall.server.enums.Role;
 
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
@@ -31,7 +33,8 @@ public class UserDto {
 
     @NotEmpty(message = "Password cannot be null")
     @Size(min = 6, max = 20, message = "Password must be between 6 to 20")
-    @JsonIgnore
+
+    // @JsonIgnore
     private String password;
 
     // @Pattern(regexp = "\'^[\\w\\-\\.]+@([\\w-]+\\.)+[\\w-]{2,}$\'gm")
@@ -46,4 +49,7 @@ public class UserDto {
     private String profession;
 
     private Date dob;
+
+    @Enumerated(EnumType.STRING)
+    private Role role;
 }
