@@ -34,7 +34,7 @@ public class UserController {
     @Autowired
     private UserServices userServices;
 
-    @PostMapping("/attendee/signup")
+    @PostMapping("/auth/attendee/signup")
     // @GetMapping("signup")
     public ResponseEntity<JwtResponse> signupAttendee(@Valid @RequestBody UserAttendee userAttendee) {
         // System.out.println(userAttendee);
@@ -42,7 +42,7 @@ public class UserController {
         // return null;
     }
 
-    @PostMapping("/coordinator/signup")
+    @PostMapping("/auth/coordinator/signup")
     // @GetMapping("signup")
     public ResponseEntity<JwtResponse> signupCoordinator(@Valid @RequestBody UserCoordinator userCoordinator) {
         System.out.println(userCoordinator);
@@ -50,7 +50,7 @@ public class UserController {
         // return null;
     }
 
-    @PostMapping("/login2")
+    @PostMapping("/auth/login2")
     public ResponseEntity<User> login(@RequestBody Map<String, Object> body) {
         String email = (String) body.get("email");
         String password = (String) body.get("password");
@@ -58,7 +58,7 @@ public class UserController {
         return userServices.login(email, password);
     }
 
-    @PostMapping("/login")
+    @PostMapping("/auth/login")
     public ResponseEntity<JwtResponse> login2(@RequestBody JwtRequest jwtRequest) {
         String email = jwtRequest.getEmail();
         String password = jwtRequest.getPassword();

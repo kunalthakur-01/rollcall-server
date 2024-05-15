@@ -76,13 +76,6 @@ package com.rollcall.server.security;
 //     }
 // }
 
-
-
-
-
-
-
-
 import java.io.IOException;
 
 import org.slf4j.Logger;
@@ -98,6 +91,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
+import io.micrometer.common.lang.NonNull;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -110,7 +104,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Autowired
     private JwtHelper jwtHelper;
-    
+
     @Autowired
     private UserDetailsService userDetailsService;
 
@@ -128,7 +122,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             token = requestHeader.substring(7);
             try {
                 username = this.jwtHelper.getUsernameFromToken(token);
-                System.out.println(username);
+                // System.out.println(username);
             } catch (IllegalArgumentException e) {
                 logger.info("Illegal Argument while fetching the username !!");
                 e.printStackTrace();
@@ -170,5 +164,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         filterChain.doFilter(request, response);
+    }
+
+    @Override
+    protected boolean shouldNotFilter(@NonNull HttpServletRequest req) throws ServletException {
+        return req.getServletPath().contains("/api/user/auth/login")
+                || req.getServletPath().contains("/api/user/auth/coordinator/signup")
+                || req.getServletPath().contains("/api/user/auth/attendee/signup");
     }
 }

@@ -13,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.rollcall.server.enums.Role;
 import com.rollcall.server.security.JwtAuthenticationEntryPoint;
 import com.rollcall.server.security.JwtAuthenticationFilter;
 
@@ -38,13 +39,14 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
 
         httpSecurity.csrf(csrf -> csrf.disable())
-                .cors(cors -> cors.disable())
+                // .cors(cors -> cors.disable())
                 .authorizeHttpRequests(requests -> requests
-                        .requestMatchers("api/user/coordinator/signup").permitAll()
-                        .requestMatchers("api/user/attendee/signup").permitAll()
-                        .requestMatchers("api/user/login").permitAll()
+                        // .requestMatchers("api/user/coordinator/signup").permitAll()
+                        // .requestMatchers("api/user/attendee/signup").permitAll()
+                        .requestMatchers("api/user/auth/**").permitAll()
                         // .requestMatchers("api/user/**").permitAll()
-                        // .requestMatchers("api/user/group/**").authenticated()
+                        .requestMatchers("api/user/group/new/**").hasAuthority(Role.TEACHER.name())
+                        // .requestMatchers("api/user/group/new/**").hasRole(Role.TEACHER.name())  --> do "ROLE_" + role.name() in getAuthorities in User model
                         .anyRequest()
                         .authenticated())
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(point))
