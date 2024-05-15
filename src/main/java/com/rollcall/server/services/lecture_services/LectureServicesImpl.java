@@ -1,5 +1,6 @@
 package com.rollcall.server.services.lecture_services;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.rollcall.server.dao.AttendeeDao;
 import com.rollcall.server.dao.CoordinatorDao;
 import com.rollcall.server.dao.GroupDao;
 import com.rollcall.server.dao.LectureDao;
@@ -38,6 +40,9 @@ public class LectureServicesImpl implements LectureServices {
 
     @Autowired
     private CoordinatorDao coordinatorDao;
+
+    @Autowired
+    private AttendeeDao attendeeDao;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -85,17 +90,50 @@ public class LectureServicesImpl implements LectureServices {
     public List<Lecture> getLecturesByUserId(UUID userId, String onDate) {
         User existingUser = null;
         Coordinator existingCoordinator = null;
+        Attendee existingAttendee = null;
 
         try {
             existingUser = userDao.findById(userId)
                     .orElseThrow(() -> new ResourceNotFoundException("User", "Id", userId.toString()));
-            existingCoordinator = coordinatorDao.findByUser(existingUser);
         } catch (Exception e) {
             throw new InternalServerException(e.getMessage());
         }
 
-        if (existingCoordinator == null)
-            throw new ResourceNotFoundException("Coordinator", "Id", userId.toString());
+        String profession = existingUser.getProfession();
+
+        if(profession.equals("teacher")) {
+            try {
+                existingCoordinator = coordinatorDao.findByUser(existingUser);
+            } catch (Exception e) {
+                throw new InternalServerException(e.getMessage());
+            }
+
+            if (existingCoordinator == null)
+                throw new ResourceNotFoundException("Coordinator", "Id", userId.toString());
+            
+            return existingCoordinator.getLectures();
+        }
+
+        else {
+            try {
+                existingAttendee = attendeeDao.findByUser(existingUser);
+            } catch (Exception e) {
+                throw new InternalServerException(e.getMessage());
+            }
+
+            if (existingAttendee == null)
+                throw new ResourceNotFoundException("Attendee", "Id", userId.toString());
+
+            List<Lecture> lectures = new ArrayList<>();
+            for (Group group : existingAttendee.getOtherGroups()) {
+                for (Lecture lecture : group.getLectures()) {
+                    lectures.add(lecture);
+                }
+            }
+
+            return lectures;
+        }
+
         
 
         // String dateString = onDate.split("T")[0];
@@ -134,7 +172,7 @@ public class LectureServicesImpl implements LectureServices {
 
         // return allLectures;
 
-        return existingCoordinator.getLectures();
+        // return existingCoordinator.getLectures();
     }
 
     @Override
