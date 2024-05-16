@@ -101,7 +101,7 @@ public class LectureServicesImpl implements LectureServices {
 
         String profession = existingUser.getProfession();
 
-        if(profession.equals("teacher")) {
+        if (profession.equals("teacher")) {
             try {
                 existingCoordinator = coordinatorDao.findByUser(existingUser);
             } catch (Exception e) {
@@ -110,8 +110,22 @@ public class LectureServicesImpl implements LectureServices {
 
             if (existingCoordinator == null)
                 throw new ResourceNotFoundException("Coordinator", "Id", userId.toString());
-            
-            return existingCoordinator.getLectures();
+
+            List<Lecture> lectures = new ArrayList<>();
+
+            for (Group group : existingCoordinator.getOtherGroups()) {
+                for (Lecture lecture : group.getLectures()) {
+                    lectures.add(lecture);
+                }
+            }
+
+            for (Group group : existingCoordinator.getCreatedGroups()) {
+                for (Lecture lecture : group.getLectures()) {
+                    lectures.add(lecture);
+                }
+            }
+
+            return lectures;
         }
 
         else {
@@ -134,8 +148,6 @@ public class LectureServicesImpl implements LectureServices {
             return lectures;
         }
 
-        
-
         // String dateString = onDate.split("T")[0];
 
         // int year = Integer.parseInt(dateString.split("-")[0]);
@@ -145,11 +157,10 @@ public class LectureServicesImpl implements LectureServices {
         // System.out.println(month);
         // System.out.println(year);
 
+        // System.out.println(date.split("-")[0]);
+        // System.out.println(date.split("-")[1]);
+        // System.out.println(date.split("-")[2]);
 
-        // System.out.println(date.split("-")[0]); 
-        // System.out.println(date.split("-")[1]); 
-        // System.out.println(date.split("-")[2]); 
-            
         // DateTimeFormatter dtf = DateTimeFormatter.RFC_1123_DATE_TIME;
         // LocalDateTime ldt = LocalDateTime.parse(onDate, dtf);
 
@@ -159,15 +170,15 @@ public class LectureServicesImpl implements LectureServices {
         // List<Lecture> allLectures = new ArrayList<>();
 
         // for (Lecture lecture : existingCoordinator.getLectures()) {
-        //     calendar.setTime(lecture.getCreatedOnDate());
-        //     System.out.println(calendar.get(Calendar.DATE));
-        //     System.out.println(date);
-        //     System.out.println("*************************");
-        //     if(date != calendar.get(Calendar.DATE)) continue;
-        //     if(month != calendar.get(Calendar.MONTH) + 1) continue;
-        //     if(year != calendar.get(Calendar.YEAR)) continue;
+        // calendar.setTime(lecture.getCreatedOnDate());
+        // System.out.println(calendar.get(Calendar.DATE));
+        // System.out.println(date);
+        // System.out.println("*************************");
+        // if(date != calendar.get(Calendar.DATE)) continue;
+        // if(month != calendar.get(Calendar.MONTH) + 1) continue;
+        // if(year != calendar.get(Calendar.YEAR)) continue;
 
-        //     allLectures.add(lecture);
+        // allLectures.add(lecture);
         // }
 
         // return allLectures;
