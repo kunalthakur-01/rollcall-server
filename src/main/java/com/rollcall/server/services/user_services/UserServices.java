@@ -24,4 +24,6 @@ public interface UserServices {
     public List<CoordinatorDto> getAllCoordinators();
 
     public List<UserDto> getUsersBySearch(List<UUID> alreadyAddedUsers, UUID userId, String searchBy);
+
+    public JwtResponse refreshjwt(String refreshToken);
 }

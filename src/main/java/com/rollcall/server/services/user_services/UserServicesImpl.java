@@ -30,8 +30,10 @@ import com.rollcall.server.exceptions.ResourceAlreadyExistException;
 import com.rollcall.server.models.Attendee;
 import com.rollcall.server.models.Coordinator;
 import com.rollcall.server.models.JwtResponse;
+import com.rollcall.server.models.RefreshToken;
 import com.rollcall.server.models.User;
 import com.rollcall.server.security.JwtHelper;
+import com.rollcall.server.services.refreshToken_services.RefreshTokenServices;
 
 @Service
 public class UserServicesImpl implements UserServices {
@@ -59,6 +61,9 @@ public class UserServicesImpl implements UserServices {
 
     @Autowired
     private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private RefreshTokenServices refreshTokenServices;
 
     @Override
     @Transactional
@@ -105,9 +110,12 @@ public class UserServicesImpl implements UserServices {
 
         String token = this.jwtHelper.generateToken(existingUser);
 
+        RefreshToken refreshToken = refreshTokenServices.createRefreshToken(existingUser.getEmail());
+
         JwtResponse response = JwtResponse.builder()
                 .id(existingUser.getId())
                 .jwtToken(token)
+                .refreshToken(refreshToken.getRefreshToken())
                 .email(existingUser.getUsername())
                 .userName(existingUser.getUserName())
                 .profession(existingUser.getProfession())
@@ -156,15 +164,40 @@ public class UserServicesImpl implements UserServices {
         this.doAuthenticate(email, password);
 
         User userDetails = (User) userDetailsService.loadUserByUsername(email);
-        
+
         String token = this.jwtHelper.generateToken(userDetails);
+
+        RefreshToken refreshToken = refreshTokenServices.createRefreshToken(userDetails.getUsername());
 
         JwtResponse response = JwtResponse.builder()
                 .id(userDetails.getId())
                 .jwtToken(token)
+                .refreshToken(refreshToken.getRefreshToken())
                 .email(userDetails.getUsername())
                 .userName(userDetails.getUserName())
                 .profession(userDetails.getProfession())
+                .build();
+
+        return response;
+    }
+
+    @Override
+    public JwtResponse refreshjwt(String refreshToken) {
+        RefreshToken refreshToken2 = refreshTokenServices.verifyRefreshToken(refreshToken);
+
+        User user = refreshToken2.getUser();
+
+        String token = this.jwtHelper.generateToken(user);
+
+        RefreshToken newRefreshToken = refreshTokenServices.createRefreshToken(user.getUsername());
+
+        JwtResponse response = JwtResponse.builder()
+                .id(user.getId())
+                .jwtToken(token)
+                .refreshToken(newRefreshToken.getRefreshToken())
+                .email(user.getUsername())
+                .userName(user.getUserName())
+                .profession(user.getProfession())
                 .build();
 
         return response;
@@ -177,7 +210,8 @@ public class UserServicesImpl implements UserServices {
 
         try {
             matchedusers = userDao.findByUserNameContainingOrNameContaining(searchBy, searchBy);
-            // User user = userDao.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", "Id", userId.toString()));
+            // User user = userDao.findById(userId).orElseThrow(() -> new
+            // ResourceNotFoundException("User", "Id", userId.toString()));
 
             for (User user : matchedusers) {
                 if (!alreadyAddedUsers.contains(user.getId())) {
@@ -188,7 +222,8 @@ public class UserServicesImpl implements UserServices {
             throw new InternalServerException(e.getMessage());
         }
 
-        List<User> removedAdmin = filteredUsers.stream().filter(user -> !user.getId().equals(userId)).collect(Collectors.toList());
+        List<User> removedAdmin = filteredUsers.stream().filter(user -> !user.getId().equals(userId))
+                .collect(Collectors.toList());
         return removedAdmin.stream().map(user -> userToDto(user)).collect(Collectors.toList());
     }
 

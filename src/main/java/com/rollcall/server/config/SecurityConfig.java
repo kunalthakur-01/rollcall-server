@@ -41,11 +41,12 @@ public class SecurityConfig {
         httpSecurity.csrf(csrf -> csrf.disable())
                 // .cors(cors -> cors.disable())
                 .authorizeHttpRequests(requests -> requests
-                        // .requestMatchers("api/user/coordinator/signup").permitAll()
+                        // .requestMatchers("api/user/all/coordinator").permitAll()
                         // .requestMatchers("api/user/attendee/signup").permitAll()
+                        .requestMatchers("api/user/refresh/jwt").permitAll()
                         .requestMatchers("api/user/auth/**").permitAll()
-                        // .requestMatchers("api/user/**").permitAll()
                         .requestMatchers("api/user/group/new/**").hasAuthority(Role.TEACHER.name())
+                        .requestMatchers("api/user/add/group/**").hasAuthority(Role.TEACHER.name())
                         // .requestMatchers("api/user/group/new/**").hasRole(Role.TEACHER.name())  --> do "ROLE_" + role.name() in getAuthorities in User model
                         .anyRequest()
                         .authenticated())

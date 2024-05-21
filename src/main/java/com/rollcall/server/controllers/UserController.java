@@ -19,6 +19,7 @@ import com.rollcall.server.dto.CoordinatorDto;
 import com.rollcall.server.dto.UserDto;
 import com.rollcall.server.models.JwtRequest;
 import com.rollcall.server.models.JwtResponse;
+import com.rollcall.server.models.RefreshTokenRequest;
 import com.rollcall.server.models.User;
 import com.rollcall.server.models.UserAttendee;
 import com.rollcall.server.models.UserCoordinator;
@@ -64,6 +65,11 @@ public class UserController {
         String password = jwtRequest.getPassword();
 
         return ResponseEntity.ok().body(userServices.login2(email, password));                
+    }
+
+    @PostMapping("/refresh/jwt")
+    public ResponseEntity<JwtResponse> refreshJwtToken(@RequestBody RefreshTokenRequest refreshTokenRequest) {
+        return ResponseEntity.ok().body(userServices.refreshjwt(refreshTokenRequest.getRefreshToken()));               
     }
 
     @GetMapping("/all/attendees")
