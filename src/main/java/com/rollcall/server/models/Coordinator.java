@@ -52,4 +52,7 @@ public class Coordinator {
     @OneToMany(mappedBy = "coordinator")
     @JsonIgnore
     private List<Lecture> lectures;
+
+    @ManyToMany(mappedBy = "coordinators")
+    private List<TeacherNotification> notifications;
 }
