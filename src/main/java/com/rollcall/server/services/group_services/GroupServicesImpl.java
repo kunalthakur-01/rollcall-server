@@ -1,5 +1,7 @@
 package com.rollcall.server.services.group_services;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +17,7 @@ import com.rollcall.server.dao.AttendeeDao;
 import com.rollcall.server.dao.CoordinatorDao;
 import com.rollcall.server.dao.GroupDao;
 import com.rollcall.server.dao.LectureDao;
+import com.rollcall.server.dao.NotificationDao;
 import com.rollcall.server.dao.UserDao;
 import com.rollcall.server.dto.GroupDto;
 import com.rollcall.server.exceptions.CustomException;
@@ -25,6 +28,7 @@ import com.rollcall.server.models.Attendee;
 import com.rollcall.server.models.Coordinator;
 import com.rollcall.server.models.Group;
 import com.rollcall.server.models.Lecture;
+import com.rollcall.server.models.Notification;
 import com.rollcall.server.models.User;
 import com.rollcall.server.payloads.ApiResponse;
 
@@ -45,6 +49,9 @@ public class GroupServicesImpl implements GroupServices {
 
     @Autowired
     private AttendeeDao attendeeDao;
+
+    @Autowired
+    private NotificationDao notificationDao;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -84,11 +91,44 @@ public class GroupServicesImpl implements GroupServices {
             // existingCoordinator.getGroups().add(group); // optional or not compulsary
             group.setAdmin(existingCoordinator);
 
+            Notification notification = Notification.builder()
+                    .users(new ArrayList<>())
+                    .message(String.format("%s created a new group(%s)", existingUser.getName(), group.getGroupName()))
+                    .time(new Date())
+                    .type("NEWGROUP")
+                    .build();
+            
+            // notification logic*********************************************************************************
+            for (Group groups: existingCoordinator.getCreatedGroups()) {
+                for (Attendee attendees : groups.getAttendees()) {
+                    if(!notification.getUsers().contains(attendees.getUser())) notification.getUsers().add(attendees.getUser());
+                }
+            }
+            for (Group groups: existingCoordinator.getCreatedGroups()) {
+                for (Coordinator coordinators : groups.getCoordinators()) {
+                    if(!notification.getUsers().contains(coordinators.getUser())) notification.getUsers().add(coordinators.getUser());
+                }
+            }
+
+            for (Group groups: existingCoordinator.getOtherGroups()) {
+                for (Attendee attendees : groups.getAttendees()) {
+                    if(!notification.getUsers().contains(attendees.getUser())) notification.getUsers().add(attendees.getUser());
+                }
+            }
+            for (Group groups: existingCoordinator.getOtherGroups()) {
+                for (Coordinator coordinators : groups.getCoordinators()) {
+                    if(!notification.getUsers().contains(coordinators.getUser()) && !coordinators.getUser().equals(existingUser)) notification.getUsers().add(coordinators.getUser());
+                }
+                if(notification.getUsers().contains(existingCoordinator.getUser())) notification.getUsers().add(groups.getAdmin().getUser());
+            }
+
+
+
+            // existingCoordinator.getCreatedGroups().stream().map(g -> g.getCoordinators().stream().map(c -> notification.getUsers().add(c.getUser())));
+
+            notificationDao.save(notification);
             newGroup = groupDao.save(group);
 
-            // List<Group> l = new ArrayList<>();
-            // l.add(newGroup);
-            // existingCoordinator.setGroups(l);
         } catch (Exception e) {
             throw new InternalServerException(e.getMessage());
         }
