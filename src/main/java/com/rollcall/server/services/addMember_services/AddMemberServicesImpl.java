@@ -1,6 +1,7 @@
 package com.rollcall.server.services.addMember_services;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -11,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.rollcall.server.dao.AttendeeDao;
 import com.rollcall.server.dao.CoordinatorDao;
 import com.rollcall.server.dao.GroupDao;
+import com.rollcall.server.dao.NotificationDao;
 import com.rollcall.server.dao.UserDao;
 import com.rollcall.server.exceptions.CustomException;
 import com.rollcall.server.exceptions.InternalServerException;
@@ -20,6 +22,7 @@ import com.rollcall.server.exceptions.ResourceNotFoundException;
 import com.rollcall.server.models.Attendee;
 import com.rollcall.server.models.Coordinator;
 import com.rollcall.server.models.Group;
+import com.rollcall.server.models.Notification;
 import com.rollcall.server.models.User;
 import com.rollcall.server.payloads.ApiResponse;
 
@@ -37,6 +40,9 @@ public class AddMemberServicesImpl implements AddMemberServices {
 
     @Autowired
     private AttendeeDao attendeeDao;
+
+    @Autowired
+    private NotificationDao notificationDao;
 
     @Override
     @Transactional
@@ -119,11 +125,13 @@ public class AddMemberServicesImpl implements AddMemberServices {
     }
 
     @Override
+    @Transactional
     public ApiResponse addMembers(UUID groupId, List<UUID> members) {
         Group existingGroup = null;
 
         try {
-            existingGroup = groupDao.findById(groupId).orElseThrow(() -> new ResourceNotFoundException("Group", "Id", groupId.toString()));
+            existingGroup = groupDao.findById(groupId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Group", "Id", groupId.toString()));
         } catch (Exception e) {
             throw new InternalServerException(e.getMessage());
         }
@@ -131,35 +139,42 @@ public class AddMemberServicesImpl implements AddMemberServices {
         List<String> errors = new ArrayList<>();
 
         try {
+            Notification notification = Notification.builder()
+                            .users(new ArrayList<>())
+                            .message(String.format("%s added you in the group: %s", existingGroup.getAdmin().getUser().getName(), existingGroup.getGroupName()))
+                            .time(new Date())
+                            .type("ADDMEMBER")
+                            .build();
+
             for (int i = 0; i < members.size(); i++) {
                 User user = userDao.findById(members.get(i)).orElse(null);
-                if(user == null) {
+                notification.getUsers().add(user);
+                
+                if (user == null) {
                     errors.add(new ResourceNotFoundException("User", "Id", members.get(i).toString()).getMessage());
                 }
-                else if(user.getProfession().equals("student")) {
+                
+                else if (user.getProfession().equals("student")) {
                     Attendee existingAttendee = attendeeDao.findByUser(user);
-                    if(!existingGroup.getAttendees().contains(existingAttendee)) {
-                        existingGroup.getAttendees().add(existingAttendee);
-                    }
-                }
-                else if(user.getProfession().equals("teacher")){
+                    if (!existingGroup.getAttendees().contains(existingAttendee)) existingGroup.getAttendees().add(existingAttendee);
+                } 
+                
+                else if (user.getProfession().equals("teacher")) {
                     Coordinator existingCoordinator = coordinatorDao.findByUser(user);
-                    if(!existingGroup.getCoordinators().contains(existingCoordinator) && !existingGroup.getAdmin().equals(existingCoordinator)) {
-                        existingGroup.getCoordinators().add(existingCoordinator);
-                    }
+                    if (!existingGroup.getCoordinators().contains(existingCoordinator) && !existingGroup.getAdmin().equals(existingCoordinator)) existingGroup.getCoordinators().add(existingCoordinator);
                 }
             }
-            
+
+            notificationDao.save(notification);
             groupDao.save(existingGroup);
         } catch (Exception e) {
             throw new InternalServerException(e.getMessage());
         }
 
-        if(!errors.isEmpty()) {
+        if (!errors.isEmpty()) {
             throw new MultipleException(errors);
-        }
-        else {
-            return new ApiResponse("Members added successfully!", true); 
+        } else {
+            return new ApiResponse("Members added successfully!", true);
         }
 
         // return modelMapper.map(groupDao.save(existingGroup), GroupDto.class);
