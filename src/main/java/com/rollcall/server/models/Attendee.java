@@ -52,7 +52,4 @@ public class Attendee {
     })
     @JsonIgnore
     private List<Attendance> attendances;
-
-    @ManyToMany(mappedBy = "attendees")
-    private List<StudentNotification> notifications;
 }
