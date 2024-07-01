@@ -41,7 +41,10 @@ public class SecurityConfig {
         httpSecurity.csrf(csrf -> csrf.disable())
                 // .cors(cors -> cors.disable())
                 .authorizeHttpRequests(requests -> requests
-                        // .requestMatchers("api/user/all/coordinator").permitAll()
+                        .requestMatchers("api/user/all/coordinators").permitAll()
+                        .requestMatchers("api/user/all/attendees").permitAll()
+                        .requestMatchers("api/user/group/all").permitAll()
+                        .requestMatchers("api/user/notification/all/**").permitAll()
                         // .requestMatchers("api/user/attendee/signup").permitAll()
                         .requestMatchers("api/user/refresh/jwt").permitAll()
                         .requestMatchers("api/user/auth/**").permitAll()
