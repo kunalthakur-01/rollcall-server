@@ -22,6 +22,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
@@ -54,6 +55,10 @@ public class User implements UserDetails {
 
     @JsonIgnore
     private Date dob;
+
+    // @JsonIgnore
+    @ManyToMany(mappedBy = "users")
+    private List<Notification> notifications;
 
     @Enumerated(EnumType.STRING)
     private Role role;
