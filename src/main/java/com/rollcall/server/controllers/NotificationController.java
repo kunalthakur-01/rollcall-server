@@ -19,13 +19,8 @@ public class NotificationController {
     @Autowired
     private NotificationServices notificationServices;
 
-    @GetMapping("/student/{userId}")
-    public ResponseEntity<?> getStudentNotifications(@PathVariable("userid") UUID userId) {
-        return ResponseEntity.ok().body(notificationServices.getStudentNotifications(userId));
-    }
-
-    @GetMapping("/teacher/{userId}")
-    public ResponseEntity<?> getTeacherNotifications(@PathVariable("userid") UUID userId) {
-        return ResponseEntity.ok().body(notificationServices.getTeacherNotifications(userId));
+    @GetMapping("/all/{userId}")
+    public ResponseEntity<?> getNotifications(@PathVariable("userId") UUID userId) {
+        return ResponseEntity.ok().body(notificationServices.getNotifications(userId));
     }
 }
