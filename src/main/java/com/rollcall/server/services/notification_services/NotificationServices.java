@@ -7,4 +7,5 @@ import com.rollcall.server.models.Notification;
 
 public interface NotificationServices {
     List<Notification> getNotifications(UUID userId);
+    void OnNotification(Notification notification);
 }
