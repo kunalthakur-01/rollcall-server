@@ -17,9 +17,9 @@ import com.rollcall.server.dao.AttendeeDao;
 import com.rollcall.server.dao.CoordinatorDao;
 import com.rollcall.server.dao.GroupDao;
 import com.rollcall.server.dao.LectureDao;
-import com.rollcall.server.dao.NotificationDao;
 import com.rollcall.server.dao.UserDao;
 import com.rollcall.server.dto.GroupDto;
+import com.rollcall.server.enums.Severity;
 import com.rollcall.server.exceptions.CustomException;
 import com.rollcall.server.exceptions.InternalServerException;
 import com.rollcall.server.exceptions.ResourceAlreadyExistException;
@@ -31,6 +31,7 @@ import com.rollcall.server.models.Lecture;
 import com.rollcall.server.models.Notification;
 import com.rollcall.server.models.User;
 import com.rollcall.server.payloads.ApiResponse;
+import com.rollcall.server.services.notification_services.NotificationServices;
 
 @Service
 public class GroupServicesImpl implements GroupServices {
@@ -51,7 +52,7 @@ public class GroupServicesImpl implements GroupServices {
     private AttendeeDao attendeeDao;
 
     @Autowired
-    private NotificationDao notificationDao;
+    private NotificationServices notificationServices;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -94,8 +95,10 @@ public class GroupServicesImpl implements GroupServices {
             Notification notification = Notification.builder()
                     .users(new ArrayList<>())
                     .message(String.format("%s created a new group(%s)", existingUser.getName(), group.getGroupName()))
-                    .time(new Date())
+                    .timeStamp(new Date())
+                    .severity(Severity.INFORMATION)
                     .type("NEWGROUP")
+                    .source(group.getId().toString())
                     .build();
             
             // notification logic*********************************************************************************
@@ -126,7 +129,7 @@ public class GroupServicesImpl implements GroupServices {
 
             // existingCoordinator.getCreatedGroups().stream().map(g -> g.getCoordinators().stream().map(c -> notification.getUsers().add(c.getUser())));
 
-            notificationDao.save(notification);
+            notificationServices.OnNotification(notification);
             newGroup = groupDao.save(group);
 
         } catch (Exception e) {
