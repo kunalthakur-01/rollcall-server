@@ -6,6 +6,7 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.rollcall.server.dao.NotificationDao;
 import com.rollcall.server.dao.UserDao;
 import com.rollcall.server.exceptions.InternalServerException;
 import com.rollcall.server.exceptions.ResourceNotFoundException;
@@ -17,6 +18,9 @@ public class NotificationServicesImpl implements NotificationServices {
 
     @Autowired
     private UserDao userDao;
+
+    @Autowired
+    private NotificationDao notificationDao;
 
     @Override
     public List<Notification> getNotifications(UUID userId) {
@@ -31,5 +35,10 @@ public class NotificationServicesImpl implements NotificationServices {
         }
 
         return existingUser.getNotifications();
+    }
+
+    @Override
+    public void OnNotification(Notification notification) {
+        notificationDao.save(notification);
     }
 }
