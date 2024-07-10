@@ -14,6 +14,7 @@ import com.rollcall.server.dao.CoordinatorDao;
 import com.rollcall.server.dao.GroupDao;
 import com.rollcall.server.dao.NotificationDao;
 import com.rollcall.server.dao.UserDao;
+import com.rollcall.server.enums.Severity;
 import com.rollcall.server.exceptions.CustomException;
 import com.rollcall.server.exceptions.InternalServerException;
 import com.rollcall.server.exceptions.MultipleException;
@@ -142,8 +143,10 @@ public class AddMemberServicesImpl implements AddMemberServices {
             Notification notification = Notification.builder()
                             .users(new ArrayList<>())
                             .message(String.format("%s added you in the group: %s", existingGroup.getAdmin().getUser().getName(), existingGroup.getGroupName()))
-                            .time(new Date())
+                            .timeStamp(new Date())
+                            .severity(Severity.INFORMATION)
                             .type("ADDMEMBER")
+                            .source(existingGroup.getId().toString())
                             .build();
 
             for (int i = 0; i < members.size(); i++) {
