@@ -15,7 +15,7 @@ import com.rollcall.server.models.User;
 @Service
 public class RefreshTokenServicesImpl implements RefreshTokenServices {
 
-    private long refreshTokenValidity = 34 * 60 * 60 * 1000;
+    private long refreshTokenValidity = 60 * 1000;
 
     @Autowired
     private RefreshTokenDao refreshTokenDao;
