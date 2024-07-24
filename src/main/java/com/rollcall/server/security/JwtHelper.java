@@ -21,7 +21,7 @@ import io.jsonwebtoken.security.Keys;
 public class JwtHelper {
 
     // requirement :
-    public static final long JWT_TOKEN_VALIDITY = 24 * 60 * 60;
+    public static final long JWT_TOKEN_VALIDITY = 30 * 1000;
 
     // public static final long JWT_TOKEN_VALIDITY = 60;
     private String SECRET = "fasfaslaslascascasbasbascasdasfasxASFACASDFACASDFASFASFDAFASFASDAADSCSDFADCVSGCFVADXCcadwavfsfarvf";
@@ -74,7 +74,7 @@ public class JwtHelper {
 
         return Jwts.builder().claim("authorities", populateAuthorities(userDetails.getAuthorities()))
                 .setSubject(userDetails.getUsername()).setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY * 1000))
+                .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY))
                 .signWith(getSignKey(), SignatureAlgorithm.HS512).compact();
     }
 
