@@ -119,7 +119,6 @@ public class UserServicesImpl implements UserServices {
                 .email(existingUser.getUsername())
                 .userName(existingUser.getUserName())
                 .profession(existingUser.getProfession())
-                .tokenValidity(24*60*60*1000)
                 .build();
 
         return ResponseEntity.status(201).body(response);
@@ -177,7 +176,7 @@ public class UserServicesImpl implements UserServices {
                 .email(userDetails.getUsername())
                 .userName(userDetails.getUserName())
                 .profession(userDetails.getProfession())
-                .tokenValidity(24*60*60*1000)
+                // .tokenValidity(24*60*60*1000)
                 .build();
 
         return response;
@@ -200,7 +199,6 @@ public class UserServicesImpl implements UserServices {
                 .email(user.getUsername())
                 .userName(user.getUserName())
                 .profession(user.getProfession())
-                .tokenValidity(24*60*60*1000)
                 .build();
 
         return response;
