@@ -14,5 +14,4 @@ public class JwtResponse {
     private String email;
     private String userName;
     private String profession;
-    private long tokenValidity;
 }
